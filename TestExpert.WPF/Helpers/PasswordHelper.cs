@@ -1,0 +1,1 @@
+namespace TestExpert.WPF.Helpers; public static class PasswordHelper { public static string Hash(string p)=>BCrypt.Net.BCrypt.HashPassword(p); public static bool Verify(string p,string h)=>BCrypt.Net.BCrypt.Verify(p,h); }

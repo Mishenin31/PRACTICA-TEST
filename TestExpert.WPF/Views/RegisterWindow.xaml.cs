@@ -1,0 +1,2 @@
+using System.Windows; using TestExpert.WPF.Data; using TestExpert.WPF.Services;
+namespace TestExpert.WPF.Views; public partial class RegisterWindow:Window{ public RegisterWindow(){InitializeComponent();} private void BtnCreate_Click(object s,RoutedEventArgs e){ var (ok,msg)=new AuthService(new AppDbContext()).Register(TxtName.Text,TxtLogin.Text,Pwd.Password,int.Parse(TxtGroupId.Text)); MessageBox.Show(msg); if(ok) Close(); }}

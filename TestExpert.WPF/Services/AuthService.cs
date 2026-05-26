@@ -1,0 +1,5 @@
+using Microsoft.EntityFrameworkCore; using TestExpert.WPF.Data; using TestExpert.WPF.Models;
+namespace TestExpert.WPF.Services;
+public class AuthService { private readonly AppDbContext _db; public AuthService(AppDbContext db)=>_db=db;
+public User? Login(string login,string password){ var u=_db.Users.Include(x=>x.Role).Include(x=>x.Group).FirstOrDefault(x=>x.Login==login&&x.IsActive); if(u==null||!BCrypt.Net.BCrypt.Verify(password,u.PasswordHash)) return null; _db.SystemLogs.Add(new SystemLog{UserId=u.Id,Action="Login",Details=$"Вход: {u.FullName} ({u.Role.Name})"}); _db.SaveChanges(); return u; }
+public (bool success,string message) Register(string fullName,string login,string password,int groupId){ if(_db.Users.Any(u=>u.Login==login)) return (false,"Логин уже занят."); var role=_db.Roles.First(r=>r.Name=="Student"); _db.Users.Add(new User{FullName=fullName,Login=login,PasswordHash=BCrypt.Net.BCrypt.HashPassword(password),RoleId=role.Id,GroupId=groupId,IsActive=true}); _db.SaveChanges(); return (true,"Регистрация прошла успешно."); }}
