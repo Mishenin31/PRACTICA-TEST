@@ -1,0 +1,3 @@
+using System.Data; using System.Globalization; using ClosedXML.Excel; using CsvHelper;
+namespace TestExpert.WPF.Services;
+public static class ExportService { public static void ExportToExcel(DataTable data,string filePath){ using var wb=new XLWorkbook(); wb.Worksheets.Add(data,"Статистика"); wb.SaveAs(filePath);} public static void ExportToCsv(DataTable data,string filePath){ using var sw=new StreamWriter(filePath); using var csv=new CsvWriter(sw,CultureInfo.InvariantCulture); foreach(DataColumn c in data.Columns) csv.WriteField(c.ColumnName); csv.NextRecord(); foreach(DataRow r in data.Rows){ foreach(var i in r.ItemArray) csv.WriteField(i); csv.NextRecord(); } }}

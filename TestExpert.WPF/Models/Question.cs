@@ -1,0 +1,2 @@
+namespace TestExpert.WPF.Models;
+public class Question { public int Id { get; set; } public string Text { get; set; } = null!; public int SubjectId { get; set; } public Subject Subject { get; set; } = null!; public string Difficulty { get; set; } = "Basic"; public string Topic { get; set; } = null!; public int Points { get; set; } = 1; public ICollection<AnswerOption> Options { get; set; } = new List<AnswerOption>(); public ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>(); }

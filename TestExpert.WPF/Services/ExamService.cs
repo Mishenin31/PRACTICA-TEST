@@ -1,0 +1,5 @@
+using Microsoft.EntityFrameworkCore; using TestExpert.WPF.Data; using TestExpert.WPF.Models;
+namespace TestExpert.WPF.Services;
+public class ExamService { private readonly AppDbContext _db; public ExamService(AppDbContext db)=>_db=db;
+public ExamAttempt StartAttempt(int studentId,int examId){ var exam=_db.Exams.Include(e=>e.ExamQuestions).ThenInclude(eq=>eq.Question).First(e=>e.Id==examId); var cnt=_db.ExamAttempts.Count(a=>a.StudentId==studentId&&a.ExamId==examId&&a.Status!="Reset"); if(exam.MaxAttempts>0&&cnt>=exam.MaxAttempts) throw new InvalidOperationException("Лимит попыток исчерпан"); var at=new ExamAttempt{StudentId=studentId,ExamId=examId,AttemptNumber=cnt+1,MaxScore=exam.ExamQuestions.Sum(x=>x.Question.Points)}; _db.ExamAttempts.Add(at); _db.SaveChanges(); return at; }
+public void FinishAttempt(int attemptId){ var at=_db.ExamAttempts.Include(a=>a.Answers).Include(a=>a.Exam).First(a=>a.Id==attemptId); at.Score=at.Answers.Count(a=>a.IsCorrect); at.FinishedAt=DateTime.Now; var pct=at.MaxScore>0?at.Score/at.MaxScore*100:0; at.Status=pct>=at.Exam.PassingScore?"Passed":"Failed"; _db.SaveChanges(); }}
